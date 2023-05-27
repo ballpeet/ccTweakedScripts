@@ -61,13 +61,6 @@ local sortFilters = {
 
 }
 
-local function printTable(name, tabl)
-    print("Printing table "..name)
-    for i,v in pairs(tabl) do
-        print(i,v)
-    end
-end
-
 local inOrderOfPriority = {}
 
 local inputChestPeriph = peripheral.wrap(inputChest)
@@ -134,6 +127,7 @@ local function tick()
                     print("Filter type is "..filterType)
                     if filterType == "ID" then
                         for i,v in pairs(filterToCompare) do
+                            print(v, itemDetails.name)
                             if v == itemDetails.name then
                                 passedAmt = passedAmt + 1
                                 print("Item has a similar id!")
@@ -144,6 +138,7 @@ local function tick()
                         for i,v in pairs(filterToCompare) do
 
                             for i2,v2 in pairs(itemDetails["tags"]) do
+                                print(v, v2)
                                 if v == v2 then
                                     passedAmt = passedAmt + 1
                                     print("Item has a similar tag!")
