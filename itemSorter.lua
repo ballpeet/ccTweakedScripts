@@ -61,6 +61,13 @@ local sortFilters = {
 
 }
 
+local function printTable(name, tabl)
+    print("Printing table "..name)
+    for i,v in pairs(tabl) do
+        print(i,v)
+    end
+end
+
 local inOrderOfPriority = {}
 
 local inputChestPeriph = peripheral.wrap(inputChest)
@@ -110,6 +117,9 @@ local function tick()
             local tablesToThinkAbout = {}
             for _, tablIndex in pairs(inOrderOfPriority) do
                 local currentTable = sortFilters[tablIndex]
+
+                print(tablIndex)
+
                 local currentTableScore = 0
                 print(tablIndex)
                 for filterIndex, filterValue in pairs(currentTable["filter"]) do
@@ -205,3 +215,5 @@ end
 
 startup()
 tick()
+
+-- download https://raw.githubusercontent.com/ballpeet/ccTweakedScripts/main/itemSorter.lua startup
