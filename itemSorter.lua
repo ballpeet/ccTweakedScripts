@@ -1,3 +1,5 @@
+print("startup")
+
 local inputChest = "minecraft:barrel_2"
 
 local junkChest = "minecraft:barrel_0"
@@ -210,5 +212,3 @@ end
 
 startup()
 tick()
-
--- download https://raw.githubusercontent.com/ballpeet/ccTweakedScripts/main/itemSorter.lua startup
