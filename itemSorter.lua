@@ -113,22 +113,24 @@ local function tick()
                 local currentTableScore = 0
                 print(tablIndex)
                 for filterIndex, filterValue in pairs(currentTable["filter"]) do
+                    print(filterIndex)
+
                     local filterToCompare = filterValue["value"]
                     local filterType = filterValue["type"]
                     local filterArgument = filterValue["arg"]
 
                     local passedAmt = 0
+
+                    print("Filter type is "..filterType)
                     if filterType == "ID" then
-                        
                         for i,v in pairs(filterToCompare) do
-                            if v == itemDetails["name"] then
+                            if v == itemDetails.name then
                                 passedAmt = passedAmt + 1
                                 print("Item has a similar id!")
                             end
                         end
 
                     elseif filterType == "TAG" then
-
                         for i,v in pairs(filterToCompare) do
 
                             for i2,v2 in pairs(itemDetails["tags"]) do
@@ -142,6 +144,8 @@ local function tick()
                     end
 
                     local passed = false
+
+                    print("Argument is "..filterArgument)
                     if filterArgument == "NOT" then
                         if passedAmt == 0 then
                             passed = true
