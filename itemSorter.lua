@@ -188,7 +188,9 @@ local function tick()
             end
 
             for i,v in pairs(tablesToThinkAbout) do
-                print(i,v)
+                print("Index: "..tostring(i))
+                print("Table Index: "..tostring(v["tableIndex"]))
+                print("Score: "..tostring(v["score"]))
             end
         end
 
