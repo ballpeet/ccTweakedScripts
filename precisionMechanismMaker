@@ -121,10 +121,7 @@ local messageListen = function()
 end
 local mainLoop = function()
     while true do 
-        local monitorsGot = { peripheral.find("monitor") }
-        for i,v in pairs(monitorsGot) do
-            updateMonitor(v)
-        end
+        updateMonitor(term)
         print("tick")
 
         os.sleep(1)
