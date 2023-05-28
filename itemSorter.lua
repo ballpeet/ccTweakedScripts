@@ -136,8 +136,8 @@ local function tick()
                         for i,v in pairs(filterToCompare) do
 
                             for i2,v2 in pairs(itemDetails["tags"]) do
-                                print(v, v2)
-                                if v == v2 then
+                                print(v, i2)
+                                if v == i2 then
                                     passedAmt = passedAmt + 1
                                     print("Item has a similar tag!")
                                 end
