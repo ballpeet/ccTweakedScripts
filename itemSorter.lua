@@ -1,4 +1,3 @@
-print("startup")
 
 local inputChest = "minecraft:barrel_2"
 local junkChest = "minecraft:barrel_0"
@@ -205,14 +204,10 @@ local function tick()
             if tableIndexGoTo ~= 0 and tableIndexGoToScore > 0 then
                 local tableGot = sortFilters[tableIndexGoTo]
                 local periphGot = peripheral.wrap(tableGot["id"])
-                print("Moving to "..tableGot["name"])
-
                 totalItemsInSession = totalItemsInSession + itemDetails.count
                 addToList(itemDetails.name, itemDetails.count, tableGot["id"], tableGot["name"])
                 periphGot.pullItems(inputChest, itemIndex)
             else
-                print("Moving to junk.")
-
                 totalItemsInSession = totalItemsInSession + itemDetails.count
                 addToList(itemDetails.name, itemDetails.count, junkChest, "Junk")
                 junkCheckPeriph.pullItems(inputChest, itemIndex)
@@ -230,6 +225,7 @@ local function updateMonitor()
     for index, periph in pairs(monitorsGot) do
         local sizeX, sizeY = periph.getSize()
 
+        periph.setTextScale(0.4)
         periph.setBackgroundColor(colors.black)
         periph.setTextColor(colors.white)
         periph.clear()
