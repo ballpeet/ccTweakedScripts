@@ -1,0 +1,26 @@
+
+local messageListen = function()
+    while true do 
+        local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+        print("modem message!")
+    end
+end
+local monitorTouchListen = function()
+    while true do 
+        local event, side, x, y = os.pullEvent("monitor_touch")
+        print("monitor touched!")
+    end
+end
+
+local mainLoop = function()
+    while true do 
+        local monitorsGot = { peripheral.find("monitor") }
+        print("tick")
+
+        os.sleep(1)
+    end
+end
+
+coroutine.wrap(messageListen)()
+coroutine.wrap(monitorTouchListen)()
+mainLoop()
