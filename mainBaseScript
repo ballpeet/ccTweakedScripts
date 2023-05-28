@@ -71,8 +71,8 @@ sendMessage(newPartChannel, {askForInitGUIEvent, 0})
 
 local mainLoop = function()
     while true do 
-        updateMonitor(term)
-        print("tick")
+        --updateMonitor(term)
+        --print("tick")
 
         os.sleep(1)
     end
