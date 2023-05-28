@@ -1,4 +1,3 @@
-
 local inputChest = "minecraft:barrel_2"
 local junkChest = "minecraft:barrel_0"
 
@@ -91,7 +90,7 @@ local tickNumberAt = 0
 
 local totalItemsInSession = 0
 local listOfRecent = {}
-local listItemDecayTick = 20
+local listItemDecayTick = 200
 
 local function addToList(id, amt, to, toDisplay)
 
@@ -110,8 +109,6 @@ end
 
 local function tick()
     tickNumberAt = tickNumberAt + 1
-
-    print(tickNumberAt)
 
     local listOfItems = inputChestPeriph.list()
     if #listOfItems > 0 then
@@ -237,8 +234,9 @@ local function updateMonitor()
             periph.write(txt)
         end
         write("Total amount of items gained since startup: "..tostring(totalItemsInSession))
+        write("Current tick: "..tostring(tickNumberAt))
 
-        currentY = 3
+        currentY = 4
 
         local offset = 0
         for id ,valueTable in pairs(listOfRecent) do
