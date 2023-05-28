@@ -87,10 +87,6 @@ local function startup()
 
         table.insert(inOrderOfPriority, toPutAt, index)
     end
-
-    for index, value in pairs(inOrderOfPriority) do
-        print(index, value)
-    end
 end
 
 --NOT, IS, ALL
