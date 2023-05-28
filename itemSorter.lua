@@ -1,4 +1,3 @@
-
 local inputChest = "minecraft:barrel_2"
 local junkChest = "minecraft:barrel_0"
 
@@ -223,9 +222,8 @@ local function updateMonitor()
     local monitorsGot = { peripheral.find("monitor") }
 
     for index, periph in pairs(monitorsGot) do
+        periph.setTextScale(0.2)
         local sizeX, sizeY = periph.getSize()
-
-        periph.setTextScale(0.4)
         periph.setBackgroundColor(colors.black)
         periph.setTextColor(colors.white)
         periph.clear()
