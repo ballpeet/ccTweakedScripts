@@ -1,7 +1,6 @@
 print("startup")
 
 local inputChest = "minecraft:barrel_2"
-
 local junkChest = "minecraft:barrel_0"
 
 -- STRICT, LEAST
@@ -89,10 +88,27 @@ local function startup()
     end
 end
 
---NOT, IS, ALL
---ID, TAG
--- STRICT, LEAST
 local tickNumberAt = 0
+
+local totalItemsInSession = 0
+local listOfRecent = {}
+local listItemDecayTick = 20
+
+local function addToList(id, amt, to, toDisplay)
+
+    if listOfRecent[id] then
+        listOfRecent[id]["tick"] = tickNumberAt
+        listOfRecent[id]["amt"] = listOfRecent[id]["amt"] + amt
+    else
+        listOfRecent[id] = {
+            ["tick"] = tickNumberAt,
+            ["sentTo"] = to,
+            ["sentToDisplay"] = toDisplay,
+            ["amt"] = amt
+        }
+    end
+end
+
 local function tick()
     tickNumberAt = tickNumberAt + 1
 
@@ -103,8 +119,6 @@ local function tick()
         
         for itemIndex, _ in pairs(listOfItems) do
             local itemDetails = inputChestPeriph.getItemDetail(itemIndex)
-
-            print("Sorting... "..itemDetails.name)
             local tablesToThinkAbout = {}
             for _, tablIndex in pairs(inOrderOfPriority) do
                 local currentTable = sortFilters[tablIndex]
@@ -116,14 +130,11 @@ local function tick()
                     local filterArgument = filterValue["arg"]
 
                     local passedAmt = 0
-
-                    print("Filter type is "..filterType)
                     if filterType == "ID" then
                         for i,v in pairs(filterToCompare) do
                             print(v, itemDetails.name)
                             if v == itemDetails.name then
                                 passedAmt = passedAmt + 1
-                                print("Item has a similar id!")
                             end
                         end
 
@@ -134,7 +145,6 @@ local function tick()
                                 print(v, i2)
                                 if v == i2 then
                                     passedAmt = passedAmt + 1
-                                    print("Item has a similar tag!")
                                 end
                             end
                         end
@@ -142,8 +152,6 @@ local function tick()
                     end
 
                     local passed = false
-
-                    print("Argument is "..filterArgument)
                     if filterArgument == "NOT" then
                         if passedAmt == 0 then
                             passed = true
@@ -160,29 +168,22 @@ local function tick()
 
                     if passed == true then
                         currentTableScore = currentTableScore + 1
-                        print("Increasing score!")
                     end
                 end
 
                 local filterTypeOther = currentTable["filterType2"]
                 local filterExtra = currentTable["filterExtra"]
-                
-                print("Filter type (2) is "..tostring(filterTypeOther))
                 local addBool = false
                 if filterTypeOther == "STRICT" then
                     if currentTableScore == #currentTable["filter"] then
-                        print("STRICT Passed!")
                         addBool = true
                     end
                 elseif filterTypeOther == "LEAST" then
                     if currentTableScore >= filterExtra then
-                        print("LEAST Passed!")
                         addBool = true
                     end
                 end
                 if addBool == true then
-                    print("Adding!")
-
                     table.insert(tablesToThinkAbout, {
                         ["tableIndex"] = tablIndex,
                         ["score"] = currentTableScore
@@ -194,10 +195,6 @@ local function tick()
             local tableIndexGoToScore = 0
 
             for i,v in pairs(tablesToThinkAbout) do
-                print("Index: "..tostring(i))
-                print("Table Index: "..tostring(v["tableIndex"]))
-                print("Score: "..tostring(v["score"]))
-
                 if v["score"] > tableIndexGoToScore then
                     
                     tableIndexGoToScore = v["score"]
@@ -210,10 +207,14 @@ local function tick()
                 local periphGot = peripheral.wrap(tableGot["id"])
                 print("Moving to "..tableGot["name"])
 
+                totalItemsInSession = totalItemsInSession + itemDetails.count
+                addToList(itemDetails.name, itemDetails.count, tableGot["id"], tableGot["name"])
                 periphGot.pullItems(inputChest, itemIndex)
             else
                 print("Moving to junk.")
 
+                totalItemsInSession = totalItemsInSession + itemDetails.count
+                addToList(itemDetails.name, itemDetails.count, junkChest, "Junk")
                 junkCheckPeriph.pullItems(inputChest, itemIndex)
             end
         end
@@ -223,5 +224,52 @@ local function tick()
     end
 end
 
+local function updateMonitor()
+    local monitorsGot = { peripheral.find("monitor") }
+
+    for index, periph in pairs(monitorsGot) do
+        local sizeX, sizeY = periph.getSize()
+
+        periph.setBackgroundColor(colors.black)
+        periph.setTextColor(colors.white)
+        periph.clear()
+
+        local currentX = 1
+        local currentY = 1
+
+        local function write(txt)
+            periph.setCursorPos(currentX, currentY)
+            periph.write(txt)
+        end
+        write("Total amount of items gained since startup: "..tostring(totalItemsInSession))
+
+        currentY = 3
+
+        local offset = 0
+        for id ,valueTable in pairs(listOfRecent) do
+            local ticksExisted = tickNumberAt - valueTable["tick"]
+            if ticksExisted > listItemDecayTick then
+                listOfRecent[id] = nil
+            else
+
+                local sentTo = valueTable["sentTo"]
+                local sentToDisplay = valueTable["sentToDisplay"]
+                local amountOfItems = valueTable["sentTo"]
+                write("Item: "..tostring(id).." Amount: "..tostring(amountOfItems).." Sent to: "..tostring(sentTo).."("..tostring(sentToDisplay)..")")
+                currentY = currentY + 1
+            end
+        end
+    end
+end
+
 startup()
 tick()
+updateMonitor()
+
+local tickTime = 0.1
+while true do
+    tick()
+    updateMonitor()
+
+    os.sleep(tickTime)
+end
