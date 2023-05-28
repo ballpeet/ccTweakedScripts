@@ -69,7 +69,19 @@ os.sleep(1)
 
 sendMessage(newPartChannel, {askForInitGUIEvent, 0})
 
-local messageListen = function()
+local mainLoop = function()
+    while true do 
+        local monitorsGot = { peripheral.find("monitor") }
+        for i,v in pairs(monitorsGot) do
+            updateMonitor(v)
+        end
+        print("tick")
+
+        os.sleep(1)
+    end
+end
+
+coroutine.wrap(function()
     while true do 
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
         print("modem message!")
@@ -89,26 +101,11 @@ local messageListen = function()
             end
         end
     end
-end
-local monitorTouchListen = function()
+end)()
+coroutine.wrap(function()
     while true do 
         local event, side, x, y = os.pullEvent("monitor_touch")
         print("monitor touched!")
     end
-end
-
-local mainLoop = function()
-    while true do 
-        local monitorsGot = { peripheral.find("monitor") }
-        for i,v in pairs(monitorsGot) do
-            updateMonitor(v)
-        end
-        print("tick")
-
-        os.sleep(1)
-    end
-end
-
-coroutine.wrap(messageListen)()
-coroutine.wrap(monitorTouchListen)()
+end)()
 mainLoop()
