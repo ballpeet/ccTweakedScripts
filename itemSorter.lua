@@ -190,10 +190,31 @@ local function tick()
                 end
             end
 
+            local tableIndexGoTo = 0
+            local tableIndexGoToScore = 0
+
             for i,v in pairs(tablesToThinkAbout) do
                 print("Index: "..tostring(i))
                 print("Table Index: "..tostring(v["tableIndex"]))
                 print("Score: "..tostring(v["score"]))
+
+                if v["score"] > tableIndexGoToScore then
+                    
+                    tableIndexGoToScore = v["score"]
+                    tableIndexGoTo = v["tableIndex"]
+                end
+            end
+
+            if tableIndexGoTo ~= 0 and tableIndexGoToScore > 0 then
+                local tableGot = sortFilters[tableIndexGoTo]
+                local periphGot = peripheral.wrap(tableGot["id"])
+                print("Moving to "..tableGot["name"])
+
+                periphGot.pullItems(inputChest, itemIndex)
+            else
+                print("Moving to junk.")
+
+                junkCheckPeriph.pullItems(inputChest, itemIndex)
             end
         end
 
@@ -204,5 +225,3 @@ end
 
 startup()
 tick()
-
--- download https://raw.githubusercontent.com/ballpeet/ccTweakedScripts/main/itemSorter.lua startup
