@@ -1,3 +1,4 @@
+
 local inputChest = "minecraft:barrel_2"
 local junkChest = "minecraft:barrel_0"
 
