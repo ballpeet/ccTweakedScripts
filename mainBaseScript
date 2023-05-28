@@ -10,6 +10,11 @@ for i,v in pairs(modems) do
     v.open(newPartChannel)
     v.open(messageChannel)
 end
+local sendMessage = function(channel, message)
+    for i,v in pairs(modems) do
+        v.transmit(channel, 1, message)
+    end
+end
 
 local buttonToggleDatas = {
     ["precisionStatus"] = false
