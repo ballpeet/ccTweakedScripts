@@ -1,5 +1,8 @@
 local modems = {peripheral.find("modem")}
 local monitorsGot = {peripheral.find("monitor")}
+
+local newPartChannel = 2000
+local messageChannel = 3000
 for i,v in pairs(modems) do
     v.open(newPartChannel)
     v.open(messageChannel)
@@ -9,8 +12,6 @@ local sendMessage = function(channel, message)
         v.transmit(channel, 1, message)
     end
 end
-local newPartChannel = 2000
-local messageChannel = 3000
 
 local computerName = os.getComputerID()
 
@@ -30,7 +31,6 @@ local initGUIStuff = {
         ["vars"] = {
             ["backgroundColor"] = colors.black,
             ["textColor"] = colors.white,
-            ["varTextColor"] = colors.green,
             ["text"] = "Precision Mechanism Farm",
         }
     },
@@ -70,7 +70,7 @@ local initGUIStuff = {
             ["backgroundColor"] = colors.black,
             ["textColor"] = colors.white,
             ["text"] = "Add to queue",
-            ["varName"] = addToQueueEventName
+            ["eventName"] = addToQueueEventName
         }
     },
     {
