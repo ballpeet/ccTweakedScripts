@@ -121,8 +121,8 @@ local messageListen = function()
 end
 local mainLoop = function()
     while true do 
-        updateMonitor(term)
-        print("tick")
+        --updateMonitor(term)
+        --print("tick")
 
         os.sleep(1)
     end
