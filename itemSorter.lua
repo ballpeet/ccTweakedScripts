@@ -236,7 +236,6 @@ local function updateMonitor()
         write("Total amount of items gained since startup: "..tostring(totalItemsInSession))
         currentY = 2
         write("Current tick: "..tostring(tickNumberAt))
-
         currentY = 4
 
         local offset = 0
@@ -248,7 +247,7 @@ local function updateMonitor()
 
                 local sentTo = valueTable["sentTo"]
                 local sentToDisplay = valueTable["sentToDisplay"]
-                local amountOfItems = valueTable["sentTo"]
+                local amountOfItems = valueTable["amt"]
                 write("Item: "..tostring(id).." Amount: "..tostring(amountOfItems).." Sent to: "..tostring(sentTo).."("..tostring(sentToDisplay)..")")
                 currentY = currentY + 1
             end
