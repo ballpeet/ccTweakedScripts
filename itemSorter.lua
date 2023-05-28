@@ -22,7 +22,7 @@ local sortFilters = {
             },
 
         },
-        ["filterType"] = "STRICT",
+        ["filterType2"] = "STRICT",
         ["filterExtra"] = 1,
         ["priority"] = 0
     },
@@ -39,7 +39,7 @@ local sortFilters = {
             },
 
         },
-        ["filterType"] = "LEAST",
+        ["filterType2"] = "LEAST",
         ["filterExtra"] = 1,
         ["priority"] = 0
     },
@@ -164,8 +164,8 @@ local function tick()
                     end
                 end
 
-                local filterTypeOther = sortFilters["filterType2"]
-                local filterExtra = sortFilters["filterExtra"]
+                local filterTypeOther = currentTable["filterType2"]
+                local filterExtra = currentTable["filterExtra"]
                 
                 print("Filter type (2) is "..tostring(filterTypeOther))
                 local addBool = false
