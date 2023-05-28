@@ -234,6 +234,7 @@ local function updateMonitor()
             periph.write(txt)
         end
         write("Total amount of items gained since startup: "..tostring(totalItemsInSession))
+        currentY = 2
         write("Current tick: "..tostring(tickNumberAt))
 
         currentY = 4
