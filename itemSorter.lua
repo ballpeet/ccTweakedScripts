@@ -164,17 +164,17 @@ local function tick()
                     end
                 end
 
-                local filterType2 = sortFilters["filterType"]
+                local filterTypeOther = sortFilters["filterType"]
                 local filterExtra = sortFilters["filterExtra"]
                 
-                print("Filter type (2) is "..filterType2)
+                print("Filter type (2) is "..tostring(filterTypeOther))
                 local addBool = false
-                if filterType2 == "STRICT" then
+                if filterTypeOther == "STRICT" then
                     if currentTableScore == #currentTable["filter"] then
                         print("STRICT Passed!")
                         addBool = true
                     end
-                elseif filterType2 == "LEAST" then
+                elseif filterTypeOther == "LEAST" then
                     if currentTableScore >= filterExtra then
                         print("LEAST Passed!")
                         addBool = true
@@ -204,3 +204,5 @@ end
 
 startup()
 tick()
+
+-- download https://raw.githubusercontent.com/ballpeet/ccTweakedScripts/main/itemSorter.lua startup
