@@ -56,7 +56,7 @@ local sortFilters = {
             },
 
         },
-        ["filterType"] = "LEAST",
+        ["filterType2"] = "LEAST",
         ["filterExtra"] = 1,
         ["priority"] = 0
     }
@@ -164,7 +164,7 @@ local function tick()
                     end
                 end
 
-                local filterTypeOther = sortFilters["filterType"]
+                local filterTypeOther = sortFilters["filterType2"]
                 local filterExtra = sortFilters["filterExtra"]
                 
                 print("Filter type (2) is "..tostring(filterTypeOther))
