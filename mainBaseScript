@@ -10,7 +10,7 @@ for i,v in pairs(modems) do
     v.open(newPartChannel)
     v.open(messageChannel)
 end
-local sendMessage = function(channel, message)
+local function sendMessage(channel, message)
     for i,v in pairs(modems) do
         v.transmit(channel, 1, message)
     end
@@ -66,8 +66,7 @@ local updateMonitor = function(monitor)
 end
 
 os.sleep(1)
-
-sendMessage(newPartChannel, {askForInitGUIEvent, 0})
+print("hibernation over")
 
 local mainLoop = function()
     while true do 
@@ -107,5 +106,7 @@ local touch = function()
         print(x,y)
     end
 end
+
+sendMessage(newPartChannel, textutils.serialise({askForInitGUIEvent, 0}))
 
 parallel.waitForAny(listen, touch, mainLoop)
