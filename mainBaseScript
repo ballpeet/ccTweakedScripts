@@ -48,6 +48,8 @@ local updateMonitor = function(monitor)
         monitor.blit(txt, bgColor, txtColor)
     end
 
+    print(textutils.serialise(buttonLayout))
+
     for i,tabl in pairs(buttonLayout) do
         local typ = tabl["type"]
         local vars = tabl["vars"]
@@ -96,7 +98,8 @@ local listen = function()
     while true do 
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
         print("modem message!")
-
+        print(message)
+        
         local tabl = textutils.unserialise(message)
         local eventName, value = tabl[1], tabl[2]
 
