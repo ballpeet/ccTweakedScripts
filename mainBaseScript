@@ -81,7 +81,7 @@ local mainLoop = function()
     end
 end
 
-local listenCorou = coroutine.create(function()
+local listen = function()
     while true do 
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
         print("modem message!")
@@ -101,14 +101,12 @@ local listenCorou = coroutine.create(function()
             end
         end
     end
-end)
-local touchCorou = coroutine.create(function()
+end
+local touch = function()
     while true do 
         local event, side, x, y = os.pullEvent("monitor_touch")
         print("monitor touched!")
     end
-end)
+end
 
-coroutine.resume(listenCorou)
-coroutine.resume(touchCorou)
-mainLoop()
+parallel.waitForAny(listen, touch, mainLoop)
