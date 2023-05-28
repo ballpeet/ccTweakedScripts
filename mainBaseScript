@@ -33,6 +33,21 @@ local updateMonitor = function(monitor)
     local currentX = 1
     local currentY = 1
 
+    local boundX = 30
+    local function write(txt, bgColor, txtColor, aboveBound)
+        if aboveBound == true then
+            if currentX <= boundX then
+                return
+            end
+        else
+            if currentX >= boundX then
+                return
+            end
+        end
+
+        monitor.blit(txt, bgColor, txtColor)
+    end
+
     for i,tabl in pairs(buttonLayout) do
         local typ = tabl["type"]
         local vars = tabl["vars"]
@@ -44,7 +59,7 @@ local updateMonitor = function(monitor)
         elseif typ == "whitespace" then
             currentY = currentY + vars
         elseif typ == "button" then
-            monitor.blit(vars["text"], vars["textColor"], vars["backgroundColor"])
+            write(vars["text"], vars["textColor"], vars["backgroundColor"], true)
 
             --add logic
         elseif typ == "labelVar" then
@@ -54,11 +69,11 @@ local updateMonitor = function(monitor)
             else
                 valGot = tostring(valGot)
             end
-            monitor.blit(vars["text"], vars["textColor"], vars["backgroundColor"])
-            monitor.blit(valGot, vars["varTextColor"], vars["backgroundColor"])
-            monitor.blit(vars["afterText"], vars["textColor"], vars["backgroundColor"])
+            write(vars["text"], vars["textColor"], vars["backgroundColor"], true)
+            write(valGot, vars["varTextColor"], vars["backgroundColor"], true)
+            write(vars["afterText"], vars["textColor"], vars["backgroundColor"], true)
         elseif typ == "label" then
-            monitor.blit(vars["text"], vars["textColor"], vars["backgroundColor"])
+            write(vars["text"], vars["textColor"], vars["backgroundColor"], true)
         end
 
         currentY = currentY + 1
