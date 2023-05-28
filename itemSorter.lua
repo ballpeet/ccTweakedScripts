@@ -109,13 +109,8 @@ local function tick()
             for _, tablIndex in pairs(inOrderOfPriority) do
                 local currentTable = sortFilters[tablIndex]
 
-                print(tablIndex)
-
                 local currentTableScore = 0
-                print(tablIndex)
                 for filterIndex, filterValue in pairs(currentTable["filter"]) do
-                    print(filterIndex)
-
                     local filterToCompare = filterValue["value"]
                     local filterType = filterValue["type"]
                     local filterArgument = filterValue["arg"]
@@ -179,7 +174,7 @@ local function tick()
                         addBool = true
                     end
                 elseif filterType2 == "LEAST" then
-                    if currentTableScore > filterExtra then
+                    if currentTableScore >= filterExtra then
                         print("LEAST Passed!")
                         addBool = true
                     end
