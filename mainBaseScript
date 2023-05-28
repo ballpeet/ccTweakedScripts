@@ -70,7 +70,7 @@ print("hibernation over")
 
 local mainLoop = function()
     while true do 
-        --updateMonitor(term)
+        updateMonitor(term)
         --print("tick")
 
         os.sleep(1)
