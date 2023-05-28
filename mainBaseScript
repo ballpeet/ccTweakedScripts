@@ -33,13 +33,41 @@ local updateMonitor = function(monitor)
     local currentX = 1
     local currentY = 1
 
-    local function write(txt)
-        monitor.setCursorPos(currentX, currentY)
-        monitor.write(txt)
-    end
+    for i,tabl in pairs(buttonLayout) do
+        local typ = tabl["type"]
+        local vars = tabl["vars"]
 
-    write("hi")
+        monitor.setCursorPos(currentX, currentY)
+
+        if typ == "status" then
+
+        elseif typ == "whitespace" then
+            currentY = currentY + vars
+        elseif typ == "button" then
+            monitor.blit(vars["text"], vars["textColor"], vars["backgroundColor"])
+
+            --add logic
+        elseif typ == "labelVar" then
+            local valGot = buttonToggleDatas[vars["varName"]]
+            if valGot == nil then
+                valGot = "NULL"
+            else
+                valGot = tostring(valGot)
+            end
+            monitor.blit(vars["text"], vars["textColor"], vars["backgroundColor"])
+            monitor.blit(valGot, vars["varTextColor"], vars["backgroundColor"])
+            monitor.blit(vars["afterText"], vars["textColor"], vars["backgroundColor"])
+        elseif typ == "label" then
+            monitor.blit(vars["text"], vars["textColor"], vars["backgroundColor"])
+        end
+
+        currentY = currentY + 1
+    end
 end
+
+os.sleep(1)
+
+sendMessage(newPartChannel, {askForInitGUIEvent, 0})
 
 local messageListen = function()
     while true do 
@@ -52,7 +80,7 @@ local messageListen = function()
         if channel == newPartChannel then
             if eventName == sendInitGUIEvent then
                 for i,v in pairs(value) do
-                    print(textutils.serialise(v))
+                    table.insert(buttonLayout, v)
                 end
             end
         elseif channel == messageChannel then
