@@ -7,7 +7,7 @@ for i,v in pairs(modems) do
     v.open(newPartChannel)
     v.open(messageChannel)
 end
-local sendMessage = function(channel, message)
+local function sendMessage(channel, message)
     for i,v in pairs(modems) do
         v.transmit(channel, 1, message)
     end
@@ -101,6 +101,7 @@ local messageListen = function()
     while true do 
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
         print("modem message!")
+        print(message)
 
         local tabl = textutils.unserialise(message)
         local eventName, value = tabl[1], tabl[2]
@@ -128,5 +129,5 @@ local mainLoop = function()
     end
 end
 
-coroutine.wrap(messageListen)()
+parallel.waitForAny(messageListen, mainLoop)
 mainLoop()
