@@ -71,10 +71,7 @@ sendMessage(newPartChannel, {askForInitGUIEvent, 0})
 
 local mainLoop = function()
     while true do 
-        local monitorsGot = { peripheral.find("monitor") }
-        for i,v in pairs(monitorsGot) do
-            updateMonitor(v)
-        end
+        updateMonitor(term)
         print("tick")
 
         os.sleep(1)
@@ -104,8 +101,10 @@ local listen = function()
 end
 local touch = function()
     while true do 
-        local event, side, x, y = os.pullEvent("monitor_touch")
+        local event, button, x, y = os.pullEvent("mouse_click")
         print("monitor touched!")
+
+        print(x,y)
     end
 end
 
