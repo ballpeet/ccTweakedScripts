@@ -167,6 +167,7 @@ local function tick()
                 local filterType2 = sortFilters["filterType"]
                 local filterExtra = sortFilters["filterExtra"]
                 
+                print("Filter type (2) is "..filterType2)
                 local addBool = false
                 if filterType2 == "STRICT" then
                     if currentTableScore == #currentTable["filter"] then
