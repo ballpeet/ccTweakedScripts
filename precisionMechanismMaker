@@ -1,0 +1,135 @@
+local modems = {peripheral.find("modem")}
+local monitorsGot = {peripheral.find("monitor")}
+for i,v in pairs(modems) do
+    v.open(newPartChannel)
+    v.open(messageChannel)
+end
+local sendMessage = function(channel, message)
+    for i,v in pairs(modems) do
+        v.transmit(channel, 1, message)
+    end
+end
+local newPartChannel = 2000
+local messageChannel = 3000
+
+local computerName = os.getComputerID()
+
+local askForInitGUIEvent = "askForInitGUI"
+local sendInitGUIEvent = "sendInitGUI"
+local extCompEvent = "externalComputerEvent"
+local mainCompEvent = "mainComputerEvent"
+
+local statusName = "precisionStatus"..computerName
+local toggleName = "precisionQueueNumber"..computerName
+local queueName = "precisionQueueNumber"..computerName
+local addToQueueName = "precisionQueueAdd"..computerName
+
+local initGUIStuff = {
+    {
+        ["type"] = "label",
+        ["vars"] = {
+            ["backgroundColor"] = colors.black,
+            ["textColor"] = colors.white,
+            ["varTextColor"] = colors.green,
+            ["text"] = "Precision Mechanism Farm",
+        }
+    },
+    {
+        ["type"] = "status",
+        ["vars"] = {
+            ["offColor"] = colors.black,
+            ["onColor"] = colors.green,
+            ["errorColor"] = colors.red,
+            ["otherColor"] = colors.white,
+            ["varName"] = statusEventName
+        }
+    },
+    {
+        ["type"] = "button",
+        ["vars"] = {
+            ["backgroundColor"] = colors.black,
+            ["textColor"] = colors.white,
+            ["text"] = "Toggle",
+            ["varName"] = toggleEventName
+        }
+    },
+    {
+        ["type"] = "labelVar",
+        ["vars"] = {
+            ["backgroundColor"] = colors.black,
+            ["textColor"] = colors.white,
+            ["varTextColor"] = colors.green,
+            ["text"] = "In queue: ",
+            ["afterText"] = "!",
+            ["varName"] = queueEventName
+        }
+    },
+    {
+        ["type"] = "button",
+        ["vars"] = {
+            ["backgroundColor"] = colors.black,
+            ["textColor"] = colors.white,
+            ["text"] = "Add to queue",
+            ["varName"] = addToQueueEventName
+        }
+    },
+    {
+        ["type"] = "whitespace",
+        ["vars"] = 1
+    }
+}
+
+local updateMonitor = function(monitor)
+    monitor.clear()
+    local sizeX, sizeY = monitor.getSize()
+    monitor.setBackgroundColor(colors.black)
+    monitor.setTextColor(colors.white)
+    monitor.clear()
+
+    local currentX = 1
+    local currentY = 1
+
+    local function write(txt)
+        monitor.setCursorPos(currentX, currentY)
+        monitor.write(txt)
+    end
+
+    write("hi")
+end
+
+local messageListen = function()
+    while true do 
+        local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+        print("modem message!")
+
+        local tabl = textutils.unserialise(message)
+        local eventName, value = tabl[1], tabl[2]
+
+        if channel == newPartChannel then
+            if eventName == askForInitGUIEvent then
+                sendMessage(newPartChannel, textutils.serialise({
+                    sendInitGUIEvent,
+                    initGUIStuff
+                }))
+            end
+        elseif channel == messageChannel then
+            if eventName == extCompEvent then
+
+            end
+        end
+    end
+end
+local mainLoop = function()
+    while true do 
+        local monitorsGot = { peripheral.find("monitor") }
+        for i,v in pairs(monitorsGot) do
+            updateMonitor(v)
+        end
+        print("tick")
+
+        os.sleep(1)
+    end
+end
+
+coroutine.wrap(messageListen)()
+mainLoop()
