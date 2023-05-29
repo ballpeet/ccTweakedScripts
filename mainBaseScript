@@ -1,9 +1,10 @@
+---@diagnostic disable: assign-type-mismatch
 local newPartChannel = 2000
 local messageChannel = 3000
 local askForInitGUIEvent = "askForInitGUI"
 local sendInitGUIEvent = "sendInitGUI"
 local extCompEvent = "externalComputerEvent"
-local mainCompEvent = "mainComputerEvent"
+local mainCompSetValueEvent = "mainComputerSetValEvent"
 
 local modems = {peripheral.find("modem")}
 for i,v in pairs(modems) do
@@ -17,65 +18,201 @@ local function sendMessage(channel, message)
 end
 
 local buttonToggleDatas = {
-    ["precisionStatus"] = false
+    ["precisionStatus"] = "off"
 }
 local buttonLayout = {
 
 }
+local pressableButtons = {
+
+}
+local function clamp(val, min, max)
+    if val < min then
+        print("too small!!!")
+        val = min
+    end
+    if val > max then
+        val = max
+    end
+    return val
+end
+local function addButton(buttonStartX, buttonEndX, buttonStartY, buttonEndY, func)
+    local newTable = {}
+
+    newTable.xRange = {buttonStartX, buttonEndX}
+    newTable.yRange = {buttonStartY, buttonEndY}
+    newTable.func = func
+
+    table.insert(pressableButtons, newTable)
+end
+local function onClick(clickX, clickY)
+
+    for i,tabl in pairs(pressableButtons) do
+        
+        if (clickX >= tabl.xRange[1] and clickX <= tabl.xRange[2]) and (clickY >= tabl.yRange[1] and clickY <= tabl.yRange[2]) then
+            if tabl.func ~= nil then
+                local funcType = tabl.func[1]
+                local funcVars = tabl.func[2]
+                if funcType ~= nil and funcVars ~= nil then
+                    if funcType == "addToValue" then
+                        local valueName = funcVars[1]
+                        local byAmt = funcVars[2]
+
+                        local min = funcVars[3]
+                        local max = funcVars[4]
+
+                        if buttonToggleDatas[valueName] == nil then
+                            buttonToggleDatas[valueName] = 0
+                        end
+
+                        buttonToggleDatas[valueName] = clamp(buttonToggleDatas[valueName] + byAmt, min, max)
+
+                        print(byAmt)
+                        print(buttonToggleDatas[valueName])
+                    elseif funcType == "sendModemMessage" then
+                        sendMessage(messageChannel, textutils.serialise(funcVars))
+                    elseif funcType == "e" then
+
+                    end
+
+                end
+            end
+        end
+
+    end
+
+end
 
 local updateMonitor = function(monitor)
+    pressableButtons = {}
+
     monitor.clear()
     local sizeX, sizeY = monitor.getSize()
-    monitor.setBackgroundColor(colors.black)
-    monitor.setTextColor(colors.white)
+    local defaultBackground = colors.black
+    local defaultTextColor = colors.white
+    monitor.setBackgroundColor(defaultBackground)
+    monitor.setTextColor(defaultTextColor)
     monitor.clear()
 
     local currentX = 1
     local currentY = 1
 
+    local sizeX, sizeY = monitor.getSize()
     local boundX = 30
     local function write(txt, bgColor, txtColor, aboveBound)
         if aboveBound == true then
-            if currentX <= boundX then
+            if currentX >= boundX then
                 return
             end
         else
-            if currentX >= boundX then
+            if currentX <= boundX then
                 return
             end
         end
 
-        monitor.blit(txt, bgColor, txtColor)
+        monitor.setBackgroundColor(bgColor)
+        monitor.setTextColor(txtColor)
+        monitor.write(txt)
+
+        monitor.setBackgroundColor(defaultBackground)
+        monitor.setTextColor(defaultTextColor)
     end
 
-    print(textutils.serialise(buttonLayout))
+    --print(textutils.serialise(buttonLayout))
 
     for i,tabl in pairs(buttonLayout) do
-        local typ = tabl["type"]
-        local vars = tabl["vars"]
+        --print(textutils.serialise(tabl))
+        local typ = tabl.type
+        local vars = tabl.vars
 
         monitor.setCursorPos(currentX, currentY)
 
+        --print(typ, type(typ))
         if typ == "status" then
-
-        elseif typ == "whitespace" then
-            currentY = currentY + vars
-        elseif typ == "button" then
-            write(vars["text"], vars["textColor"], vars["backgroundColor"], true)
-
-            --add logic
-        elseif typ == "labelVar" then
-            local valGot = buttonToggleDatas[vars["varName"]]
+            local valGot = buttonToggleDatas[vars.varName]
             if valGot == nil then
                 valGot = "NULL"
             else
                 valGot = tostring(valGot)
             end
-            write(vars["text"], vars["textColor"], vars["backgroundColor"], true)
-            write(valGot, vars["varTextColor"], vars["backgroundColor"], true)
-            write(vars["afterText"], vars["textColor"], vars["backgroundColor"], true)
+
+            local statusColor = colors.white
+            if valGot == "off" then
+                statusColor = vars.offColor
+            elseif valGot == "on" then
+                statusColor = vars.onColor
+            elseif valGot == "error" or valGot == "NULL" then
+                statusColor = vars.errorColor
+            end
+            write("Status: ", vars.otherColor, vars.backgroundColor, true)
+            write(valGot, statusColor, vars.backgroundColor, true)
+
+        elseif typ == "whitespace" then
+            currentY = currentY + vars
+        elseif typ == "button" then
+            local startX, startY = monitor.getCursorPos()
+            write(vars.text, vars.textColor, vars.backgroundColor, true)
+            local endX, endY = monitor.getCursorPos()
+            addButton(startX, endX, startY, endY, {
+                "sendModemMessage",
+                {vars.eventName, {}}
+            })
+            --add logic
+
+        elseif typ == "buttonNumber" then
+            local valueName = "buttonNumberValue"..tostring(i)
+            if buttonToggleDatas[valueName] == nil then
+                buttonToggleDatas[valueName] = vars["default"]
+            end
+            local startX, startY = monitor.getCursorPos()
+            write(vars.text, vars.textColor, vars.backgroundColor, true)
+            local endX, endY = monitor.getCursorPos()
+            addButton(startX, endX, startY, endY, {
+                "sendModemMessage",
+                {vars.eventName, {buttonToggleDatas[valueName]}}
+            })
+
+            local startX, startY = monitor.getCursorPos()
+            write("-", vars.textColor, vars.backgroundColor, true)
+            local endX, endY = monitor.getCursorPos()
+            addButton(startX, endX, startY, endY, {
+                "addToValue",
+                {
+                    valueName,
+                    -vars["changeamt"],
+                    vars["min"],
+                    vars["max"]
+                }
+            })
+
+            write("["..tostring(buttonToggleDatas[valueName].."]"), vars.textColor, vars.backgroundColor, true)
+
+            local startX, startY = monitor.getCursorPos()
+            write("+", vars.textColor, vars.backgroundColor, true)
+            local endX, endY = monitor.getCursorPos()
+            addButton(startX, endX, startY, endY, {
+                "addToValue",
+                {
+                    valueName,
+                    vars["changeamt"],
+                    vars["min"],
+                    vars["max"]
+                }
+            })
+
+            --add logic
+        elseif typ == "labelVar" then
+            local valGot = buttonToggleDatas[vars.varName]
+            if valGot == nil then
+                valGot = "NULL"
+            else
+                valGot = tostring(valGot)
+            end
+            write(vars.text, vars.textColor, vars.backgroundColor, true)
+            write(valGot, vars.varTextColor, vars.backgroundColor, true)
+            write(vars.afterText, vars.textColor, vars.backgroundColor, true)
         elseif typ == "label" then
-            write(vars["text"], vars["textColor"], vars["backgroundColor"], true)
+            write(vars.text, vars.textColor, vars.backgroundColor, true)
         end
 
         currentY = currentY + 1
@@ -83,35 +220,37 @@ local updateMonitor = function(monitor)
 end
 
 os.sleep(1)
-print("hibernation over")
 
 local mainLoop = function()
     while true do 
         updateMonitor(term)
         --print("tick")
 
-        os.sleep(1)
+        os.sleep(0.1)
     end
 end
 
 local listen = function()
     while true do 
         local event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
-        print("modem message!")
-        print(message)
-        
+        --print("modem message!")
+        --print(message)
+
         local tabl = textutils.unserialise(message)
         local eventName, value = tabl[1], tabl[2]
 
         if channel == newPartChannel then
             if eventName == sendInitGUIEvent then
-                for i,v in pairs(value) do
+                for i,v in pairs(tabl[2]) do
                     table.insert(buttonLayout, v)
                 end
             end
         elseif channel == messageChannel then
-            if eventName == mainCompEvent then
+            if eventName == mainCompSetValueEvent then
+                local valueName = value[1]
+                local valueValue = value[2]
 
+                buttonToggleDatas[valueName] = valueValue
             end
         end
     end
@@ -119,12 +258,12 @@ end
 local touch = function()
     while true do 
         local event, button, x, y = os.pullEvent("mouse_click")
-        print("monitor touched!")
-
-        print(x,y)
+        onClick(x, y)
     end
 end
 
 sendMessage(newPartChannel, textutils.serialise({askForInitGUIEvent, 0}))
 
 parallel.waitForAny(listen, touch, mainLoop)
+
+-- hey
