@@ -13,17 +13,62 @@ local function sendMessage(channel, message)
     end
 end
 
+local variablesValues = {}
 local computerName = os.getComputerID()
 
 local askForInitGUIEvent = "askForInitGUI"
 local sendInitGUIEvent = "sendInitGUI"
 local extCompEvent = "externalComputerEvent"
-local mainCompEvent = "mainComputerEvent"
+local mainCompSetValueEvent = "mainComputerSetValEvent"
 
 local statusName = "precisionStatus"..computerName
-local toggleName = "precisionQueueNumber"..computerName
 local queueName = "precisionQueueNumber"..computerName
-local addToQueueName = "precisionQueueAdd"..computerName
+local values = {statusName, queueName}
+
+local addToQueueEvent = "precisionQueueAddEvent"..computerName
+local toggleStatusEvent = "toggleStatus"..computerName
+
+local function setValue(set, val)
+    variablesValues[set] = val
+end
+
+local dataDirectory = "precisionMechanismMaker"
+local function saveData()
+    local dataToSave = variablesValues
+
+    if not fs.exists('/data') then
+        fs.makeDir('/data')
+    end
+    local f = fs.open('/data/'..dataDirectory, 'w')
+    f.write(textutils.serialize(dataToSave))
+    f.close()
+end
+local function loadData()
+    local data = nil
+    if fs.exists('/data/'..dataDirectory) then
+        local f = fs.open('/data/'..dataDirectory, 'r')
+        data = textutils.unserialize(f.readAll())
+        f.close()
+    end
+
+    if data ~= nil then
+        for i,v in pairs(data) do
+            variablesValues[i] = v
+        end
+    end
+end
+
+local function sendValues()
+    for i,v in pairs(values) do
+        sendMessage(messageChannel, textutils.serialise({mainCompSetValueEvent, {v, variablesValues[v]}}))
+    end
+end
+
+local statuses = {"off", "on", "error"}
+
+setValue(statusName, statuses[1])
+setValue(queueName, 0)
+loadData()
 
 local initGUIStuff = {
     {
@@ -40,8 +85,9 @@ local initGUIStuff = {
             ["offColor"] = colors.black,
             ["onColor"] = colors.green,
             ["errorColor"] = colors.red,
-            ["otherColor"] = colors.white,
-            ["varName"] = statusEventName
+            ["otherColor"] = colors.black,
+            ["backgroundColor"] = colors.white,
+            ["varName"] = statusName
         }
     },
     {
@@ -50,7 +96,7 @@ local initGUIStuff = {
             ["backgroundColor"] = colors.black,
             ["textColor"] = colors.white,
             ["text"] = "Toggle",
-            ["varName"] = toggleEventName
+            ["eventName"] = toggleStatusEvent
         }
     },
     {
@@ -61,16 +107,20 @@ local initGUIStuff = {
             ["varTextColor"] = colors.green,
             ["text"] = "In queue: ",
             ["afterText"] = "!",
-            ["varName"] = queueEventName
+            ["varName"] = queueName
         }
     },
     {
-        ["type"] = "button",
+        ["type"] = "buttonNumber",
         ["vars"] = {
             ["backgroundColor"] = colors.black,
             ["textColor"] = colors.white,
-            ["text"] = "Add to queue",
-            ["eventName"] = addToQueueEventName
+            ["text"] = "[Add to queue] ",
+            ["min"] = 0,
+            ["max"] = 100,
+            ["changeamt"] = 1,
+            ["default"] = 0,
+            ["eventName"] = addToQueueEvent
         }
     },
     {
@@ -116,16 +166,33 @@ local messageListen = function()
         elseif channel == messageChannel then
             if eventName == extCompEvent then
 
+            elseif eventName == addToQueueEvent then
+                local number = value[1]
+            elseif eventName == toggleStatusEvent then
+                --just toggle on if off yada
+
+                if variablesValues[statusName] == statuses[2] then
+                    setValue(statusName, statuses[1])
+                else
+                    setValue(statusName, statuses[2])
+                end
             end
         end
     end
 end
+
+local function mainFunction()
+    if variablesValues[statusName] == statuses[2] then
+        
+    end
+end
+
 local mainLoop = function()
     while true do 
-        --updateMonitor(term)
-        --print("tick")
-
-        os.sleep(1)
+        os.sleep(0.5)
+        mainFunction()
+        saveData()
+        sendValues()
     end
 end
 
