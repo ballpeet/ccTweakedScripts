@@ -9,27 +9,33 @@ local function distributeFuel()
     print("fuel dist.")
     local itemList = fuelChest.list()
 
-    local canDistributeTo = {}
-    local slotToCheck = 2
-    local freeFurnaces = 0
-    for index, inventory in pairs(furnaces) do
-        local got = inventory.getItemDetail(slotToCheck)
-        if got == nil then
-            freeFurnaces = freeFurnaces + 1
-            table.insert(canDistributeTo, inventory)
-        else
-            if got.name == item.name then
+    local distributed = false
+    for slotIndex, item in pairs(itemList) do
+        if distributed == true then
+            return
+        end
+        distributed = true
+        
+        local canDistributeTo = {}
+        local slotToCheck = 2
+        local freeFurnaces = 0
+        for index, inventory in pairs(furnaces) do
+            local got = inventory.getItemDetail(slotToCheck)
+            if got == nil then
                 freeFurnaces = freeFurnaces + 1
                 table.insert(canDistributeTo, inventory)
-            end
-        end 
-     end
-    
-    if freeFurnaces == 0 then
-        return
-    end
+            else
+                if got.name == item.name then
+                    freeFurnaces = freeFurnaces + 1
+                    table.insert(canDistributeTo, inventory)
+                end
+            end 
+         end
+        
+        if freeFurnaces == 0 then
+            return
+        end
 
-    for slotIndex, item in pairs(itemList) do
         local amount = item.count
         
         local distributeAmount = math.ceil(amount / math.min(maxDistributeTo, freeFurnaces))
@@ -52,32 +58,33 @@ local function distributeItems()
     print("item dist.")
     local itemList = inputChest.list()
 
-    local canDistributeTo = {}
-    local slotToCheck = 1
-    local freeFurnaces = 0
-    for index, inventory in pairs(furnaces) do
-       local got = inventory.getItemDetail(slotToCheck)
-       if got == nil then
-           freeFurnaces = freeFurnaces + 1
-           table.insert(canDistributeTo, inventory)
-       else
-           if got.name == item.name then
-               freeFurnaces = freeFurnaces + 1
-               table.insert(canDistributeTo, inventory)
-           end
-       end 
-    end
-    
-    if freeFurnaces == 0 then
-        return
-    end
-
     local distributed = false
     for slotIndex, item in pairs(itemList) do
         if distributed == true then
             return
         end
         distributed = true
+
+        local canDistributeTo = {}
+        local slotToCheck = 1
+        local freeFurnaces = 0
+        for index, inventory in pairs(furnaces) do
+           local got = inventory.getItemDetail(slotToCheck)
+           if got == nil then
+               freeFurnaces = freeFurnaces + 1
+               table.insert(canDistributeTo, inventory)
+           else
+               if got.name == item.name then
+                   freeFurnaces = freeFurnaces + 1
+                   table.insert(canDistributeTo, inventory)
+               end
+           end 
+        end
+        
+        if freeFurnaces == 0 then
+            return
+        end
+
         local amount = item.count
         
         local distributeAmount = math.ceil(amount / math.min(maxDistributeTo, freeFurnaces))
