@@ -6,6 +6,7 @@ local fuelChest = peripheral.wrap("minecraft:chest_2")
  
 local maxDistributeTo = 4
 local function distributeFuel()
+    print("fuel dist.")
     local itemList = fuelChest.list()
     for slotIndex, item in pairs(itemList) do
         local amount = item.count
@@ -41,8 +42,10 @@ local function distributeFuel()
             end
         end 
     end 
+    print("fuel dist. end")
 end
 local function distributeItems()
+    print("item dist.")
     local itemList = inputChest.list()
     for slotIndex, item in pairs(itemList) do
         local amount = item.count
@@ -78,6 +81,7 @@ local function distributeItems()
             end
         end 
     end 
+    print("item dist. end")
 end
 local function collectOutput()
     print('collecting outputs!')
@@ -91,6 +95,7 @@ local function collectOutput()
             furnace.pushItems(peripheral.getName(outputChest), slotToCheck, got.count)
         end
     end
+    print("output collection end")
 end
 local function updateMonitors()
  
