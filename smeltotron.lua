@@ -33,10 +33,10 @@ local function distributeFuel()
             
             local inSlot = inventory.getItemDetail(slotToCheck)
             if inSlot == nil then
-                furnace.pullItems(peripheral.getName(fuelChest), slotIndex, distributeAmount, slotToCheck) 
+                inventory.pullItems(peripheral.getName(fuelChest), slotIndex, distributeAmount, slotToCheck) 
             else
                 if inSlot.name == item.name then
-                    furnace.pullItems(peripheral.getName(fuelChest), slotIndex, distributeAmount, slotToCheck) 
+                    inventory.pullItems(peripheral.getName(fuelChest), slotIndex, distributeAmount, slotToCheck) 
                 end
             end
         end 
@@ -70,10 +70,10 @@ local function distributeItems()
             
             local inSlot = inventory.getItemDetail(slotToCheck)
             if inSlot == nil then
-                furnace.pullItems(peripheral.getName(inputChest), slotIndex, distributeAmount, slotToCheck) 
+                inventory.pullItems(peripheral.getName(inputChest), slotIndex, distributeAmount, slotToCheck) 
             else
                 if inSlot.name == item.name then
-                    furnace.pullItems(peripheral.getName(inputChest), slotIndex, distributeAmount, slotToCheck) 
+                    inventory.pullItems(peripheral.getName(inputChest), slotIndex, distributeAmount, slotToCheck) 
                 end
             end
         end 
