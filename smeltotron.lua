@@ -80,6 +80,8 @@ local function distributeItems()
     end 
 end
 local function collectOutput()
+    print('collecting outputs!')
+
     for index, furnace in pairs(furnaces) do
         local slotToCheck = 3
         local got = furnace.getItemDetail(slotToCheck)
