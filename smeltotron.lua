@@ -27,7 +27,7 @@ local function distributeFuel()
             return
         end
         
-        local distributeAmount = amount / math.min(maxDistributeTo, freeFurnaces)
+        local distributeAmount = math.ceil(amount / math.min(maxDistributeTo, freeFurnaces))
         
         for index, inventory in pairs(furnaces) do
             
@@ -64,7 +64,7 @@ local function distributeItems()
             return
         end
         
-        local distributeAmount = amount / math.min(maxDistributeTo, freeFurnaces)
+        local distributeAmount = math.ceil(amount / math.min(maxDistributeTo, freeFurnaces))
         
         for index, inventory in pairs(furnaces) do
             
@@ -80,7 +80,13 @@ local function distributeItems()
     end 
 end
 local function collectOutput()
- 
+    for index, furnace in pairs(furnaces) do
+        local slotToCheck = 3
+        local got = furnace.getItemDetail(slotToCheck)
+        if got ~= nil then
+            furnace.pushItems(peripheral.getName(outputChest), slotToCheck, got.count)
+        end
+    end
 end
 local function updateMonitors()
  
