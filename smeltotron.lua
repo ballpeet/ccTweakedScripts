@@ -83,7 +83,9 @@ local function collectOutput()
     for index, furnace in pairs(furnaces) do
         local slotToCheck = 3
         local got = furnace.getItemDetail(slotToCheck)
+        print(got)
         if got ~= nil then
+            print(got.name)
             furnace.pushItems(peripheral.getName(outputChest), slotToCheck, got.count)
         end
     end
@@ -92,15 +94,17 @@ local function updateMonitors()
  
 end
  
-local waitTime = 2
+local waitTime = 4
 local mainLoop = function()
         
     while true do
         distributeItems()
+        os.sleep(waitTime/3)
         distributeFuel()
+        os.sleep(waitTime/3)
         collectOutput()
         updateMonitors()
-        os.sleep(waitTime)
+        os.sleep(waitTime/3)
     end
     
 end
