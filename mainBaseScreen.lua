@@ -17,6 +17,7 @@ local function update()
         toWrite = toWrite..string.sub(scrollingText, pos, pos)
     end
     mainMonitor.write(toWrite)
+    scrollPos = math.fmod(scrollPos, string.len(scrollingText)) + 1
 end
 
 while true do
