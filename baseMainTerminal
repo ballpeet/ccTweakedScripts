@@ -36,7 +36,7 @@ local function update()
     mainMonitor.write("XXXXXXXXXXX")
 
     local day = os.day()
-    local dayOfTheWeek = math.fmod(day, 7) + 1
+    local dayOfTheWeek = math.fmod(day, 7)
     mainMonitor.setTextColor(colors.white)
     mainMonitor.setCursorPos(1, 7)
     mainMonitor.write("Today is "..weekdays[dayOfTheWeek].." (Day "..tostring(day)..")")
@@ -47,7 +47,7 @@ local function update()
     if osTime > 12 then
         timeMarker = "PM"
     end
-    local remainder = osTime - hour
+    local remainder = osTime - math.floor(osTime)
     local minute = math.floor(60 * remainder)
     mainMonitor.write(tostring(hour)..":"..tostring(minute).." "..timeMarker)
     
