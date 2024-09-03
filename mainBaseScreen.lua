@@ -38,9 +38,9 @@ local function update()
     local day = os.day()
     local dayOfTheWeek = math.fmod(day, 7)
     mainMonitor.setTextColor(colors.white)
-    mainMonitor.setCursorPos(1, 7)
+    mainMonitor.setCursorPos(1, mainY - 3)
     mainMonitor.write("Today is "..weekdays[dayOfTheWeek].." (Day "..tostring(day)..")")
-    mainMonitor.setCursorPos(1, 8)
+    mainMonitor.setCursorPos(1, mainY - 2)
     local timeMarker = "AM"
     local osTime = os.time()
     local hour = math.fmod(math.floor(osTime), 12) + 1
@@ -55,8 +55,6 @@ local function update()
     end
     mainMonitor.write(tostring(hour)..":"..minute.." "..timeMarker)
     
-    mainMonitor.setCursorPos(1, mainY-1)
-    mainMonitor.write(tostring(scrollPos))
     mainMonitor.setCursorPos(1, mainY)
     local toWrite = ""
     for i = 1,mainX do
