@@ -3,7 +3,18 @@ local mainMonitor = monitors[1]
 local mainX, mainY = mainMonitor.getSize()
 
 local scrollPos = 1
-local scrollingText = "scroll :)"
+local scrollingText = "skibidi toilet   "
+local motd = "the only mother i will be fucking is toriel from undertale. she's a fucking milf and im not gonna deny it."
+
+local weekdays = {
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+}
 
 mainMonitor.setPaletteColor(colors.red, 0xFF0083)
 mainMonitor.setPaletteColor(colors.purple, 0xad00ff)
@@ -23,6 +34,22 @@ local function update()
     mainMonitor.write("XXXXXXXXXXX")
     mainMonitor.setCursorPos(1, 5)
     mainMonitor.write("XXXXXXXXXXX")
+
+    local day = os.day()
+    local dayOfTheWeek = math.fmod(day, 7) + 1
+    mainMonitor.setTextColor(colors.white)
+    mainMonitor.setCursorPos(1, 7)
+    mainMonitor.write("Today is "..weekdays[dayOfTheWeek].." (Day "..tostring(day)..")")
+    mainMonitor.setCursorPos(1, 8)
+    local timeMarker = "AM"
+    local osTime = os.time()
+    local hour = math.fmod(math.floor(osTime), 12) + 1
+    if osTime > 12 then
+        timeMarker = "PM"
+    end
+    local remainder = osTime - hour
+    local minute = math.floor(60 * remainder)
+    mainMonitor.write(tostring(hour)..":"..tostring(minute).." "..timeMarker)
     
     mainMonitor.setCursorPos(1, mainY-1)
     mainMonitor.write(tostring(scrollPos))
