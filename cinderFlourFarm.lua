@@ -6,36 +6,34 @@ local lavaTank = peripheral.find("create:fluid_tank")
 local monitor = peripheral.find("monitor")
 
 local function updateMonitor()
-    if monitor ~= nil then
-        coroutine.wrap(function()
-            monitor.clear()
+    coroutine.wrap(function()
+        monitor.clear()
 
-            local cinderAmt = 0
-            local cobbleAmt = 0
-            local lavaMax = 288000
-            local lavaCurrent = lavaTank.tanks()[1].amount
-            local lavaPercent = lavaCurrent / lavaMax
+        local cinderAmt = 0
+        local cobbleAmt = 0
+        local lavaMax = 288000
+        local lavaCurrent = lavaTank.tanks()[1].amount
+        local lavaPercent = lavaCurrent / lavaMax
 
-            for _,v in pairs(cobbleChest.list()) do
-                if v.name == "minecraft:cobblestone" then
-                    cobbleAmt = cobbleAmt + v.count
-                end
+        for _,v in pairs(cobbleChest.list()) do
+            if v.name == "minecraft:cobblestone" then
+                cobbleAmt = cobbleAmt + v.count
             end
+        end
 
-            for _,v in pairs(cinderVault.list()) do
-                if v.name == "create:cinder_flour" then
-                    cinderAmt = cinderAmt + v.count
-                end
+        for _,v in pairs(cinderVault.list()) do
+            if v.name == "create:cinder_flour" then
+                cinderAmt = cinderAmt + v.count
             end
+        end
 
-            monitor.setCursorPos(1,1)
-            monitor.write("Cobblestone #:"..tostring(cobbleAmt))
-            monitor.setCursorPos(1,2)
-            monitor.write("Cinder Flour #:"..tostring(cinderAmt))
-            monitor.setCursorPos(1,3)
-            monitor.write("Lava %:"..tostring(math.ceil(lavaPercent*100)))
-        end)()
-    end
+        monitor.setCursorPos(1,1)
+        monitor.write("Cobblestone #:"..tostring(cobbleAmt))
+        monitor.setCursorPos(1,2)
+        monitor.write("Cinder Flour #:"..tostring(cinderAmt))
+        monitor.setCursorPos(1,3)
+        monitor.write("Lava %:"..tostring(math.ceil(lavaPercent*100)))
+    end)()
 end
 local function distribute()
     for index, basin in pairs(basins) do
