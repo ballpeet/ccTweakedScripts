@@ -1,6 +1,6 @@
 local basins = {peripheral.find("create:basin")}
 local cobbleChest = peripheral.find("minecraft:chest")
-local cinderVault = peripheral.find("create:vault")
+local cinderVault = peripheral.find("create:item_vault")
 local lavaTank = peripheral.find("create:fluid_tank")
 
 local monitor = peripheral.find("monitor")
