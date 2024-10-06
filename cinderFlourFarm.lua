@@ -6,6 +6,8 @@ local lavaTank = peripheral.find("create:fluid_tank")
 local monitor = peripheral.find("monitor")
 
 local function updateMonitor()
+    print("updating monitor!")
+
     monitor.clear()
 
     local cinderAmt = 0
@@ -32,8 +34,12 @@ local function updateMonitor()
     monitor.write("Cinder Flour #:"..tostring(cinderAmt))
     monitor.setCursorPos(1,3)
     monitor.write("Lava %:"..tostring(math.ceil(lavaPercent*100)))
+
+    print("done updating monitor.")
 end
 local function distribute()
+    print("distributing items!")
+
     for index, basin in pairs(basins) do
         local limit = 32
         local cobbleAmt = 0
@@ -69,6 +75,8 @@ local function distribute()
             end
         end
     end
+
+    print("done distributing items.")
 end
 
 while true do 
