@@ -56,9 +56,8 @@ local function distribute()
 
             for itemIndex, item in pairs(cobbleChest.list()) do
                 if remaining > 0 then
-                    local count = item.count
-                    basin.pullItems(peripheral.getName(cobbleChest), itemIndex, remaining)
-                    remaining = remaining - count
+                    local pulled = basin.pullItems(peripheral.getName(cobbleChest), itemIndex)
+                    remaining = remaining - pulled
                 end
             end
         end
@@ -68,9 +67,8 @@ local function distribute()
 
             for itemIndex, item in pairs(cinderVault.list()) do
                 if remaining > 0 then
-                    local count = item.count
-                    basin.pullItems(peripheral.getName(cinderVault), itemIndex, remaining)
-                    remaining = remaining - count
+                    local pulled = basin.pullItems(peripheral.getName(cinderVault), itemIndex)
+                    remaining = remaining - pulled
                 end
             end
         end
